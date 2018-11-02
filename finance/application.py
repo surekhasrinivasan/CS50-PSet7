@@ -47,7 +47,29 @@ def index():
 @login_required
 def buy():
     """Buy shares of stock"""
-    return apology("TODO")
+    if request.method == "GET":
+        return render_template("buy.html")
+
+    # Ensure symbol was submitted
+    if not request.form.get("symbol"):
+        return apology("Missing symbol", 403)
+
+    # Check for proper symbol
+    stock = lookup(request.form.get("symbol"))
+
+    if not stock:
+        return apology("Invalid Symbol")
+
+    # Ensure number of shares was selected
+    if not request.form.get("shares"):
+        return apology("Missing shares", 403)
+
+    # Check for proper number of shares
+    shares = int(request.form.get("shares"))
+
+    if shares < 0:
+        return apology("Please input positivie number")
+
 
 
 @app.route("/history")
@@ -109,7 +131,7 @@ def logout():
 @login_required
 def quote():
     """Get stock quote."""
-    if(request.method) == "POST":
+    if request.method == "POST":
         rows = lookup(request.form.get("symbol"))
 
         if not rows:
